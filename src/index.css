@@ -1,0 +1,11 @@
+/**
+ * Estilos globais e configuração do Tailwind CSS v4.
+ * Define reset básico para altura total da aplicação.
+ */
+@import 'tailwindcss';
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
