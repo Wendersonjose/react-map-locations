@@ -1,18 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  MapContainer,
+  MapContainer as LeafletMapContainer,
   TileLayer,
   Marker,
-  Popup,
-  useMap,
-  useMapEvents
+  Popup
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-import useStore from '../store/useStore';
+import useStore from '../../../store/useStore';
 import { toast } from 'sonner';
+
+import MapUpdater from './MapUpdater';
+import LocationMarker from './LocationMarker';
+import TemporaryMarker from './TemporaryMarker';
+import LocationPopupForm from './LocationPopupForm';
 
 /* ================================
    Correção do ícone padrão Leaflet
@@ -27,119 +30,9 @@ const DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 /* ================================
-   Captura clique no mapa
+   Componente Mapa Principal
 ================================= */
-const LocationMarker = () => {
-  const { setSelectedLocation } = useStore();
-
-  useMapEvents({
-    click(e) {
-      setSelectedLocation({
-        lat: e.latlng.lat,
-        lng: e.latlng.lng,
-        name: ''
-      });
-    }
-  });
-
-  return null;
-};
-
-/* ================================
-   Atualiza posição do mapa (flyTo)
-================================= */
-const MapUpdater = () => {
-  const map = useMap();
-  const { mapCenter, mapZoom } = useStore();
-
-  useEffect(() => {
-    if (mapCenter) {
-      map.flyTo(mapCenter, mapZoom || 13, {
-        duration: 1.2
-      });
-    }
-  }, [mapCenter, mapZoom, map]);
-
-  return null;
-};
-
-/* ================================
-   Marcador temporário com popup auto
-================================= */
-const TemporaryMarker = ({ position, children }) => {
-  const markerRef = useRef(null);
-
-  useEffect(() => {
-    if (markerRef.current) {
-      markerRef.current.openPopup();
-    }
-  }, [position]);
-
-  return (
-    <Marker ref={markerRef} position={position} opacity={0.8}>
-      {children}
-    </Marker>
-  );
-};
-
-/* ================================
-   Formulário dentro do Popup
-   (CORREÇÃO DO DUPLO CLICK AQUI)
-================================= */
-const LocationPopupForm = ({ initialName, onSave }) => {
-  const [name, setName] = useState(initialName || '');
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      L.DomEvent.disableClickPropagation(containerRef.current);
-      L.DomEvent.disableScrollPropagation(containerRef.current);
-    }
-  }, []);
-
-  const handleSave = () => {
-    if (!name.trim()) {
-      toast.error("O nome do local não pode ser vazio.");
-      return;
-    }
-    onSave(name.trim());
-  };
-
-  return (
-    <div
-      ref={containerRef}
-      className="flex flex-col gap-2 p-1 min-w-[200px]"
-    >
-      <h3 className="font-semibold text-gray-700">
-        Adicionar aos Favoritos
-      </h3>
-
-      <input
-        className="border p-2 rounded text-sm w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
-        placeholder="Nome do local (ex: Casa)"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        autoFocus
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') handleSave();
-        }}
-      />
-
-      <button
-        type="button"
-        onClick={handleSave}
-        className="bg-green-500 text-white px-3 py-1.5 rounded text-sm hover:bg-green-600 w-full transition-colors font-medium shadow-sm"
-      >
-        Salvar Local
-      </button>
-    </div>
-  );
-};
-
-/* ================================
-   Componente Principal do Mapa
-================================= */
-const MapComponent = () => {
+const MapContainer = () => {
   const {
     favorites,
     selectedLocation,
@@ -157,7 +50,7 @@ const MapComponent = () => {
 
     toast.success("Local salvo com sucesso!");
 
-    // Fecha popup após salvar (evita clique acidental)
+    // Fecha popup após salvar
     setSelectedLocation(null);
   };
 
@@ -173,7 +66,7 @@ const MapComponent = () => {
   );
 
   return (
-    <MapContainer
+    <LeafletMapContainer
       center={mapCenter}
       zoom={mapZoom || 13}
       style={{ height: "100%", width: "100%" }}
@@ -228,8 +121,8 @@ const MapComponent = () => {
           </Popup>
         </TemporaryMarker>
       )}
-    </MapContainer>
+    </LeafletMapContainer>
   );
 };
 
-export default MapComponent;
+export default MapContainer;
