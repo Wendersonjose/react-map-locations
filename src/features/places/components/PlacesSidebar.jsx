@@ -3,7 +3,8 @@ import useStore from '../../../store/useStore';
 import { Trash2, MapPin, Search as SearchIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { searchPlaces } from '../services/searchService';
+import { getAddressByCep } from '../../../services/brasilApi';
+import { getCoordinates } from '../../../services/nominatim';
 
 /**
  * Componente PlacesSidebar (Barra Lateral de Locais).
@@ -15,9 +16,26 @@ const PlacesSidebar = () => {
   const [query, setQuery] = useState('');
   const [searchTrigger, setSearchTrigger] = useState('');
 
+  const handleSearchLogic = async (text) => {
+    const clean = text.replace(/\D/g, "");
+    const isCep = /^\d{8}$/.test(clean);
+
+    if (isCep) {
+      try {
+        const addressData = await getAddressByCep(clean);
+        const addressString = `${addressData.street}, ${addressData.neighborhood}, ${addressData.city} - ${addressData.state}`;
+        return await getCoordinates(addressString);
+      } catch (error) {
+        throw new Error("CEP não encontrado ou inválido.");
+      }
+    } else {
+      return await getCoordinates(text);
+    }
+  };
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['search', searchTrigger],
-    queryFn: () => searchPlaces(searchTrigger),
+    queryFn: () => handleSearchLogic(searchTrigger),
     enabled: !!searchTrigger,
     retry: 1,
   });
