@@ -19,6 +19,12 @@ export const CATEGORIES = [
   { id: 'casa', label: 'Casa', icon: Home, bgColor: 'bg-indigo-500', textColor: 'text-indigo-500', hex: '#6366f1' },
 ];
 
+/**
+ * Formulário exibido no Popup ao clicar no mapa.
+ * Permite nomear e categorizar o local antes de salvar.
+ * @param {string} initialName - Nome inicial (opcional, vindo da busca reversa)
+ * @param {function} onSave - Callback ao salvar (name, category)
+ */
 const LocationPopupForm = ({ initialName, onSave }) => {
   const [name, setName] = useState(initialName || '');
   const [category, setCategory] = useState('geral');

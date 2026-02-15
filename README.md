@@ -1,39 +1,69 @@
-# Mapa de Locais Favoritos (Desafio Ivare)
+Ôªø# Mapa de Locais Favoritos (Desafio Ivare)
 
-AplicaÁ„o desenvolvida para o desafio tÈcnico de Front-end da Ivare. Permite visualizar mapas, buscar endereÁos e salvar locais favoritos.
+![Screenshot](screenshot.png)
 
-##  Tecnologias Utilizadas
-
-- **React + Vite**: Performance e DX.
-- **Leaflet (react-leaflet)**: Mapas interativos (OpenStreetMap).
-- **Zustand**: Gerenciamento de estado leve e persistÍncia local.
-- **Tanstack React Query**: Gerenciamento de requisiÁıes assÌncronas (Busca).
-- **TailwindCSS**: EstilizaÁ„o moderna e responsiva.
-- **Axios**: RequisiÁıes HTTP.
-
-##  Como rodar o projeto
-
-1. Clone o repositÛrio ou acesse a pasta do projeto.
-2. Instale as dependÍncias:
-   `ash
-   npm install
-   ` 
-3. Inicie o servidor de desenvolvimento:
-   `ash
-   npm run dev
-   ` 
-4. Acesse http://localhost:5173
+Este projeto foi desenvolvido como parte do desafio t√©cnico para a vaga de Front-end na Ivare. Trata-se de uma aplica√ß√£o interativa de mapas que permite aos usu√°rios buscar endere√ßos, navegar pelo mapa e salvar seus locais favoritos.
 
 ##  Funcionalidades
 
-- **Mapa Interativo**: ComeÁa em Uberl‚ndia-MG.
-- **Busca**: Pesquise por endereÁos usando a API Nominatim (OpenStreetMap).
-- **Favoritos**: Clique no mapa para selecionar e salvar um local com nome personalizado.
-- **PersistÍncia**: Seus locais ficam salvos no navegador (LocalStorage).
-- **NavegaÁ„o**: Clique na lista lateral para voar atÈ o local salvo.
+- ** Mapa Interativo**: Visualiza√ß√£o baseada em OpenStreetMap (via Leaflet) com controles de zoom e navega√ß√£o fluida.
+- ** Busca Inteligente**:
+  - Pesquisa por endere√ßo completo.
+  - Pesquisa por CEP (integra√ß√£o com BrasilAPI e Nominatim).
+  - Busca reversa: Clique em qualquer ponto do mapa para descobrir o endere√ßo.
+- ** Favoritos**:
+  - Salve locais com nome personalizado.
+  - Categorize seus locais (Casa, Trabalho, Restaurante, Parque, Compras, Geral).
+  - Marcadores personalizados no mapa com √≠cones e cores por categoria.
+- ** Persist√™ncia de Dados**: Seus locais ficam salvos no navegador (LocalStorage)
+- ** Responsivo**: Interface adaptada para desktop e mobile.
 
-##  Decisıes TÈcnicas
+##  Tecnologias Utilizadas
 
-- Optei pelo **Leaflet** ao invÈs do Google Maps para evitar necessidade de chaves de API pagas/complexas para avaliaÁ„o, mantendo o foco na funcionalidade.
-- **Zustand** foi escolhido pela simplicidade em lidar com estados globais sem o boilerplate do Context API ou Redux.
+- **React + Vite**: Framework e bundler para alta performance e DX.
+- **Leaflet + React-Leaflet**: Biblioteca de mapas robusta e open-source.
+- **Zustand**: Gerenciamento de estado global simples e leve.
+- **TanStack Query (React Query)**: Gerenciamento eficiente de requisi√ß√µes ass√≠ncronas e cache.
+- **Axios**: Cliente HTTP para consumo de APIs.
+- **TailwindCSS**: Estiliza√ß√£o utilit√°ria moderna.
+- **Lucide React**: Biblioteca de √≠cones consistente e leve.
+- **Sonner**: Sistema de notifica√ß√µes toast elegante.
 
+##  Como Rodar o Projeto
+
+1. **Clone o reposit√≥rio**:
+   \\\ash
+   git clone https://github.com/Wendersonjose/react-map-locations.git
+   cd mapa-locais-favoritos
+   \\\`n
+2. **Instale as depend√™ncias**:
+   \\\ash
+   npm install
+   \\\`n
+3. **Inicie o servidor de desenvolvimento**:
+   \\\ash
+   npm run dev
+   \\\`n
+4. **Acesse a aplica√ß√£o**:
+   Abra seu navegador em [http://localhost:5173](http://localhost:5173)
+
+##  Estrutura do Projeto
+
+\\\`nsrc/
+ features/           # Funcionalidades modulares
+    map/            # Componentes relacionados ao mapa (Marcadores, Popups)
+    places/         # Componentes da barra lateral e lista de locais
+ services/           # Integra√ß√µes com APIs externas (BrasilAPI, Nominatim)
+ store/              # Gerenciamento de estado global (Zustand)
+ layouts/            # Layouts da aplica√ß√£o
+ ...
+\\\`n
+##  Decis√µes T√©cnicas
+
+- **Leaflet**: Escolhido por ser gratuito, leve e n√£o exigir chaves de API complexas para um projeto de avalia√ß√£o, facilitando o teste por qualquer pessoa.
+- **Zustand**: Adotado pela simplicidade e menor boilerplate comparado ao Redux, ideal para o escopo deste projeto.
+- **Arquitetura**: Organiza√ß√£o por *features* para manter o c√≥digo desacoplado e escal√°vel.
+
+---
+
+Desenvolvido por [Wenderson Jos√©](https://github.com/Wendersonjose)

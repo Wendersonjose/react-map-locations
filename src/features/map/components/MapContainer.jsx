@@ -64,6 +64,7 @@ const createCustomIcon = (category) => {
 
 /* ================================
    Componente Mapa Principal
+   Responsável por renderizar o mapa, marcadores e gerenciar interações.
 ================================= */
 const MapContainer = () => {
   const {
@@ -76,22 +77,26 @@ const MapContainer = () => {
     setSelectedLocation,
   } = useStore();
 
+  /**
+   * Salva o local selecionado (temporário) como favorito.
+   * Fecha o popup após o sucesso.
+   */
   const handleSave = (name, category) => {
     if (!selectedLocation) return;
-
     addFavorite({ ...selectedLocation, name, category: category });
-
     toast.success("Local salvo com sucesso!");
-
-    // Fecha popup após salvar
     setSelectedLocation(null);
   };
 
+  /**
+   * Remove um local dos favoritos pelo ID.
+   */
   const handleRemove = (id) => {
     removeFavorite(id);
     toast.success("Local removido dos favoritos.");
   };
 
+  // Verifica se o local selecionado (busca/clique) já está salvo para não duplicar marcadores
   const isSelectedSaved = favorites.some(
     (f) => f.lat === selectedLocation?.lat && f.lng === selectedLocation?.lng,
   );

@@ -18,6 +18,12 @@ const PlacesSidebar = () => {
   const [query, setQuery] = useState("");
   const [searchTrigger, setSearchTrigger] = useState("");
 
+  /**
+   * Lógica de busca unificada:
+   * 1. Verifica se o input parece um CEP (8 dígitos).
+   * 2. Se for CEP, busca na BrasilAPI e depois converte endereço em coordenadas (Nominatim).
+   * 3. Se for texto livre, busca diretamente no Nominatim.
+   */
   const handleSearchLogic = async (text) => {
     const clean = text.replace(/\D/g, "");
     const isCep = /^\d{8}$/.test(clean);
