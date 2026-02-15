@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
-import useStore from '../../../store/useStore';
-import { Trash2, MapPin, Search as SearchIcon } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import { getAddressByCep } from '../../../services/brasilApi';
-import { getCoordinates } from '../../../services/nominatim';
+import React, { useState } from "react";
+import useStore from "../../../store/useStore";
+import { Trash2, MapPin, Search as SearchIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getAddressByCep } from "../../../services/brasilApi";
+import { getCoordinates } from "../../../services/nominatim";
+import { CATEGORIES } from "../../map/components/LocationPopupForm";
 
 /**
  * Componente PlacesSidebar (Barra Lateral de Locais).
  * Responsável por buscar, listar e gerenciar favoritos.
  */
 const PlacesSidebar = () => {
-  const { favorites, removeFavorite, setMapCenter, setSelectedLocation } = useStore();
-  
-  const [query, setQuery] = useState('');
-  const [searchTrigger, setSearchTrigger] = useState('');
+  const { favorites, removeFavorite, setMapCenter, setSelectedLocation, setMapZoom } =
+    useStore();
+
+  const [query, setQuery] = useState("");
+  const [searchTrigger, setSearchTrigger] = useState("");
 
   const handleSearchLogic = async (text) => {
     const clean = text.replace(/\D/g, "");
@@ -34,7 +36,7 @@ const PlacesSidebar = () => {
   };
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['search', searchTrigger],
+    queryKey: ["search", searchTrigger],
     queryFn: () => handleSearchLogic(searchTrigger),
     enabled: !!searchTrigger,
     retry: 1,
@@ -43,7 +45,7 @@ const PlacesSidebar = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (!query.trim()) {
-      toast.warning('Digite um endereço para buscar.');
+      toast.warning("Digite um endereço para buscar.");
       return;
     }
     setSearchTrigger(query);
@@ -57,28 +59,30 @@ const PlacesSidebar = () => {
 
   React.useEffect(() => {
     if (isLoading) {
-      toast.info('Buscando local...', { id: 'search-toast' });
+      toast.info("Buscando local...", { id: "search-toast" });
     }
   }, [isLoading]);
 
   React.useEffect(() => {
     if (isError) {
-      toast.error('Erro ao buscar o local. Tente novamente.', { id: 'search-toast' });
+      toast.error("Erro ao buscar o local. Tente novamente.", {
+        id: "search-toast",
+      });
     }
   }, [isError]);
 
   React.useEffect(() => {
     if (data) {
       if (data.length > 0) {
-        toast.success('Local encontrado!', { id: 'search-toast' });
+        toast.success("Local encontrado!", { id: "search-toast" });
         const place = data[0];
         const lat = parseFloat(place.lat);
         const lng = parseFloat(place.lon);
-        
+
         setMapCenter([lat, lng]);
         setSelectedLocation({ lat, lng, name: place.display_name });
       } else {
-        toast.warning('Local não encontrado.', { id: 'search-toast' });
+        toast.warning("Local não encontrado.", { id: "search-toast" });
       }
     }
   }, [data, setMapCenter, setSelectedLocation]);
@@ -100,12 +104,12 @@ const PlacesSidebar = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 transition-colors"
             disabled={isLoading}
           >
-            {isLoading ? '...' : <SearchIcon size={20} />}
+            {isLoading ? "..." : <SearchIcon size={20} />}
           </button>
         </form>
       </div>
@@ -117,30 +121,43 @@ const PlacesSidebar = () => {
             <p>Nenhum local salvo.</p>
           </div>
         ) : (
-          favorites.map((fav) => (
-            <div 
-              key={fav.id} 
-              className="p-3 border rounded-lg bg-white shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group flex justify-between items-center"
-              onClick={() => {
-                setMapCenter([fav.lat, fav.lng]);
-                setSelectedLocation(fav);
-              }}
-            >
-              <div className="flex-1 min-w-0 pr-2">
-                <h3 className="font-semibold text-gray-800 truncate">{fav.name}</h3>
-                <p className="text-xs text-gray-500 truncate">
-                  {fav.lat.toFixed(4)}, {fav.lng.toFixed(4)}
-                </p>
-              </div>
-              <button 
-                onClick={(e) => handleRemove(e, fav.id, fav.name)}
-                className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
-                title="Remover"
+          favorites.map((fav) => {
+            const catConfig = CATEGORIES.find(c => c.id === fav.category) || CATEGORIES[0];
+            const IconComponent = catConfig.icon;
+            
+            return (
+              <div
+                key={fav.id}
+                className="p-4 border border-black rounded-lg bg-white shadow-sm hover:shadow-md hover:border-blue-500 transition-all cursor-pointer group flex justify-between items-center mb-3"
+                onClick={() => {
+                  setMapCenter([fav.lat, fav.lng]);
+                  setSelectedLocation(fav);
+                  setMapZoom(16);
+                }}
               >
-                <Trash2 size={18} />
-              </button>
-            </div>
-          ))
+                <div className="flex items-center gap-4 flex-1 min-w-0 pr-2">
+                  <div className={`w-12 h-12 rounded-full ${catConfig.bgColor} flex items-center justify-center text-white shrink-0`}>
+                     <IconComponent size={24} strokeWidth={2} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-bold text-gray-900 truncate text-base mb-1">
+                      {fav.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 truncate font-medium">
+                       {catConfig.label} • {fav.lat.toFixed(4)}, {fav.lng.toFixed(4)}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={(e) => handleRemove(e, fav.id, fav.name)}
+                  className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors ml-2"
+                  title="Remover"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            );
+          })
         )}
       </div>
     </div>

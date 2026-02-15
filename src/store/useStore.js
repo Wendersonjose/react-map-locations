@@ -18,6 +18,9 @@ const useStore = create(
       // Centro atual do mapa (padrão: Uberlândia)
       mapCenter: [-18.9186, -48.2772], 
       
+      // Zoom do mapa
+      mapZoom: 13,
+      
       // Ação: Adiciona um novo favorito à lista
       // Gera um ID único baseado no timestamp atual
       addFavorite: (favorite) => set((state) => ({ 
@@ -34,6 +37,9 @@ const useStore = create(
       
       // Ação: Atualiza o centro do mapa (usado ao clicar na sidebar ou buscar)
       setMapCenter: (center) => set({ mapCenter: center }),
+      
+      // Ação: Atualiza o zoom do mapa
+      setMapZoom: (zoom) => set({ mapZoom: zoom }),
     }),
     {
       // Configuração do middleware de persistência
