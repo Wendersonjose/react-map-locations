@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Marker } from 'react-leaflet';
 
 const TemporaryMarker = ({ position, children }) => {
