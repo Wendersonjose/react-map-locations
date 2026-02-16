@@ -1,12 +1,11 @@
-import MainLayout from './layouts/MainLayout';
-import PlacesSidebar from './features/places/components/PlacesSidebar';
-import MapContainer from './features/map/components/MapContainer';
+import HomePage from './pages/HomePage';
+import { Toaster } from 'sonner';
 
 export default function App() {
   return (
-    <MainLayout
-      sidebar={<PlacesSidebar />}
-      content={<MapContainer />}
-    />
+    <>
+      <HomePage />
+      <Toaster richColors position="top-center" />
+    </>
   );
 }

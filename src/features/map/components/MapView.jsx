@@ -4,6 +4,7 @@ import {
   TileLayer,
   Marker,
   Popup,
+  ZoomControl,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -16,7 +17,7 @@ import { toast } from "sonner";
 import MapUpdater from "./MapUpdater";
 import LocationMarker from "./LocationMarker";
 import TemporaryMarker from "./TemporaryMarker";
-import LocationPopupForm, { CATEGORIES } from "./LocationPopupForm";
+import LocationForm, { CATEGORIES } from "../../locations/components/LocationForm";
 
 /* ================================
    Correção do ícone padrão Leaflet
@@ -66,7 +67,7 @@ const createCustomIcon = (category) => {
    Componente Mapa Principal
    Responsável por renderizar o mapa, marcadores e gerenciar interações.
 ================================= */
-const MapContainer = () => {
+const MapView = () => {
   const {
     favorites,
     selectedLocation,
@@ -92,6 +93,11 @@ const MapContainer = () => {
    * Remove um local dos favoritos pelo ID.
    */
   const handleRemove = (id) => {
+    // Se o local sendo removido é o selecionado atualmente, limpa a seleção
+    // para evitar que o popup de "Salvar Local" abra automaticamente.
+    if (selectedLocation && selectedLocation.id === id) {
+      setSelectedLocation(null);
+    }
     removeFavorite(id);
     toast.success("Local removido dos favoritos.");
   };
@@ -107,11 +113,13 @@ const MapContainer = () => {
       zoom={mapZoom || 13}
       style={{ height: "100%", width: "100%" }}
       className="z-0 outline-none"
+      zoomControl={false}
     >
       <TileLayer
         attribution="&copy; OpenStreetMap contributors"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <ZoomControl position="bottomright" />
 
       <MapUpdater />
       <LocationMarker />
@@ -124,25 +132,27 @@ const MapContainer = () => {
           icon={createCustomIcon(fav.category)}
         >
           <Popup>
-            <div className="p-2 min-w-[150px]">
-              <div className="flex items-center gap-2 mb-2">
+            <div className="p-1 min-w-[200px] max-w-[250px]">
+              <div className="flex items-start gap-2 mb-2">
                 {(() => {
                   const catConfig = CATEGORIES.find(c => c.id === fav.category) || CATEGORIES[0];
                   const CatIcon = catConfig.icon;
-                  return <CatIcon size={16} className={catConfig.textColor} />;
+                  return <CatIcon size={16} className={`mt-0.5 ${catConfig.textColor} shrink-0`} />;
                 })()}
-                <h3 className="font-bold text-lg text-gray-800 leading-none">{fav.name}</h3>
+                <h3 className="font-semibold text-sm text-gray-800 leading-tight line-clamp-2" title={fav.name}>
+                  {fav.name}
+                </h3>
               </div>
 
-              <p className="text-xs text-gray-500 mb-2">
+              <p className="text-[10px] text-gray-500 mb-2 pl-6">
                 {Number(fav.lat).toFixed(4)}, {Number(fav.lng).toFixed(4)}
               </p>
 
               <button
                 onClick={() => handleRemove(fav.id)}
-                className="text-red-500 text-sm hover:text-red-700 hover:bg-red-50 w-full py-1 rounded transition-colors border border-red-200"
+                className="text-red-500 text-xs hover:text-red-700 hover:bg-red-50 w-full py-1.5 rounded transition-colors border border-red-100 font-medium"
               >
-                Remover
+                Remover local
               </button>
             </div>
           </Popup>
@@ -155,7 +165,7 @@ const MapContainer = () => {
           position={[selectedLocation.lat, selectedLocation.lng]}
         >
           <Popup offset={[0, -32]} autoPan>
-            <LocationPopupForm
+            <LocationForm
               initialName={selectedLocation.name}
               onSave={handleSave}
             />
@@ -166,4 +176,4 @@ const MapContainer = () => {
   );
 };
 
-export default MapContainer;
+export default MapView;

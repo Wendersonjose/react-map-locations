@@ -25,14 +25,18 @@ export const CATEGORIES = [
  * @param {string} initialName - Nome inicial (opcional, vindo da busca reversa)
  * @param {function} onSave - Callback ao salvar (name, category)
  */
-const LocationPopupForm = ({ initialName, onSave }) => {
+const LocationForm = ({ initialName, onSave }) => {
   const [name, setName] = useState(initialName || '');
   const [category, setCategory] = useState('geral');
   const containerRef = useRef(null);
 
   // Atualiza o nome quando a prop initialName muda (ex: carregamento reverso)
   useEffect(() => {
-    if (initialName) setName(initialName);
+    if (initialName) {
+      // Tenta simplificar o nome pegando a primeira parte (ex: nome da rua ou estabelecimento)
+      const simplifiedName = initialName.split(',')[0].trim();
+      setName(simplifiedName);
+    }
   }, [initialName]);
 
   useEffect(() => {
@@ -108,4 +112,4 @@ const LocationPopupForm = ({ initialName, onSave }) => {
   );
 };
 
-export default LocationPopupForm;
+export default LocationForm;

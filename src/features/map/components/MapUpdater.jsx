@@ -8,7 +8,7 @@ const MapUpdater = () => {
 
   useEffect(() => {
     if (mapCenter) {
-      map.flyTo(mapCenter, mapZoom || 13, {
+      map.flyTo(mapCenter, mapZoom || 18, {
         duration: 1.2,
       });
     }
