@@ -30,7 +30,9 @@ export default function HomePage() {
 
   const handleLocationRemove = (id, name) => {
     removeFavorite(id);
-    // Optional: Add toast or confirm here if not handled in store/hook
+    // Reseta o mapa para o centro de Uberlândia ao excluir
+    setMapCenter([-18.9186, -48.2772]);
+    setMapZoom(13);
   };
 
   return (

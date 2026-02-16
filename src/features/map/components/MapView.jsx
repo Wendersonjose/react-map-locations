@@ -74,6 +74,8 @@ const MapView = () => {
     addFavorite,
     mapCenter,
     mapZoom,
+    setMapCenter,
+    setMapZoom,
     removeFavorite,
     setSelectedLocation,
   } = useStore();
@@ -99,6 +101,11 @@ const MapView = () => {
       setSelectedLocation(null);
     }
     removeFavorite(id);
+    
+    // Reseta o mapa para o centro de Uberlândia
+    setMapCenter([-18.9186, -48.2772]);
+    setMapZoom(13);
+
     toast.success("Local removido dos favoritos.");
   };
 
@@ -149,7 +156,10 @@ const MapView = () => {
               </p>
 
               <button
-                onClick={() => handleRemove(fav.id)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Impede que o clique propague para o mapa
+                  handleRemove(fav.id);
+                }}
                 className="text-red-500 text-xs hover:text-red-700 hover:bg-red-50 w-full py-1.5 rounded transition-colors border border-red-100 font-medium"
               >
                 Remover local
