@@ -49,15 +49,16 @@ Este projeto foi desenvolvido como parte do desafio técnico para a vaga de Fron
 
 ##  Estrutura do Projeto
 
-\\\`nsrc/
+```
+src/
  features/           # Funcionalidades modulares
-    map/            # Componentes relacionados ao mapa (Marcadores, Popups)
-    places/         # Componentes da barra lateral e lista de locais
- services/           # Integrações com APIs externas (BrasilAPI, Nominatim)
+    map/            # Componentes visuais do mapa (Marcadores, View)
+    locations/      # Lógica de listagem, busca e formulários (Sidebar, SearchBar)
+ services/           # Integrações com APIs (BrasilAPI, Nominatim)
  store/              # Gerenciamento de estado global (Zustand)
- layouts/            # Layouts da aplicação
+ hooks/              # Hooks personalizados (useSearchLocation)
  ...
-\\\`n
+```
 ##  Decisões Técnicas
 
 - **Leaflet**: Escolhido por ser gratuito, leve e não exigir chaves de API complexas para um projeto de avaliação, facilitando o teste por qualquer pessoa.
